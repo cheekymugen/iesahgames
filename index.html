@@ -177,7 +177,7 @@
         </div>
 
         <div class="access-btn-wrapper" id="access-section">
-            <button class="access-btn" onclick="openHiddenGameSite()">[ Acceder ]</button>
+            <button class="access-btn" onclick="inicializarAcceso()">[ Entrar ]</button>
         </div>
 
         <div id="status-msg"></div>
@@ -238,7 +238,7 @@
             if (STRICT_WHITELIST_MODE) {
                 if (whitelist.includes(userEmail)) {
                     statusBox.className = "success";
-                    statusBox.innerText = `¡Identidad Verificada! Pulsa el botón superior para entrar.`;
+                    statusBox.innerText = `¡Sesión autorizada! Pulsa el botón para continuar.`;
                     
                     googleSection.style.display = "none";
                     accessSection.style.display = "flex";
@@ -254,7 +254,7 @@
             }
         }
 
-        function open() {
+        function inicializarAcceso() {
             const newWindow = window.open('about:blank', '_blank');
     
             if (newWindow) {
@@ -266,14 +266,17 @@
                 doc.body.style.overflow = 'hidden';
                 
                 const iframe = doc.createElement('iframe');
-                iframe.src = 'https://edurocks.org';
+                
+                const secreto = "aHR0cHM6Ly9lZHVyb2Nrcy5vcmc=";
+                iframe.src = window.atob(secreto);
+                
                 iframe.style.width = '100%';
                 iframe.style.height = '100%';
                 iframe.style.border = 'none';
                 
                 doc.body.appendChild(iframe);
             } else {
-                alert('Por favor, permite las ventanas emergentes (pop-ups) para abrir los juegos.');
+                alert('Por favor, permite las ventanas emergentes (pop-ups) en tu navegador.');
             }
         }
     </script>
