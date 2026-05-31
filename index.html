@@ -27,8 +27,7 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* Efecto de líneas de monitor antiguo (retro hacker) */
+        
         body::before {
             content: " ";
             display: block;
@@ -72,7 +71,6 @@
             margin-bottom: 35px;
         }
 
-        /* Botón de Acceder Oculto al principio */
         .access-btn-wrapper {
             display: none;
             justify-content: center;
@@ -200,7 +198,6 @@
     </div>
 
     <script>
-        // --- SISTEMA DE LISTAS (Modificable) ---
         const STRICT_WHITELIST_MODE = true; 
         
         const whitelist = [
@@ -211,7 +208,6 @@
         const blacklist = [
             "troll@gmail.com"
         ];
-        // --------------------------------------------
 
         function parseJwt(token) {
             var base64Url = token.split('.')[1];
@@ -244,7 +240,6 @@
                     statusBox.className = "success";
                     statusBox.innerText = `¡Identidad Verificada! Pulsa el botón superior para entrar.`;
                     
-                    // Ocultamos el botón de Google y mostramos el botón de "Acceder"
                     googleSection.style.display = "none";
                     accessSection.style.display = "flex";
                 } else {
@@ -259,21 +254,17 @@
             }
         }
 
-        // --- TRUCO CLOAKING (about:blank) ---
-        function openHiddenGameSite() {
-            // 1. Abre una pestaña completamente vacía en el navegador
+        function open() {
             const newWindow = window.open('about:blank', '_blank');
-            
+    
             if (newWindow) {
                 const doc = newWindow.document;
                 
-                // 2. Modificamos los estilos del cuerpo de la nueva pestaña para que no tenga márgenes
                 doc.body.style.margin = '0';
                 doc.body.style.padding = '0';
                 doc.body.style.height = '100vh';
                 doc.body.style.overflow = 'hidden';
                 
-                // 3. Inyectamos de manera invisible la web "edurocks.org" dentro de un marco a pantalla completa
                 const iframe = doc.createElement('iframe');
                 iframe.src = 'https://edurocks.org';
                 iframe.style.width = '100%';
