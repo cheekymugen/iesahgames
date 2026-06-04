@@ -24,8 +24,9 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-y: auto;
             position: relative;
+            padding: 20px 0;
         }
         
         body::before {
@@ -46,9 +47,10 @@
             padding: 40px;
             border-radius: 5px;
             text-align: center;
-            max-width: 530px;
+            max-width: 850px;
             width: 90%;
             z-index: 3;
+            transition: max-width 0.5s ease;
         }
 
         h1 {
@@ -71,31 +73,93 @@
             margin-bottom: 35px;
         }
 
-        .access-btn-wrapper {
+        .categories-grid {
             display: none;
-            justify-content: center;
-            margin: 20px 0 35px 0;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
         }
 
-        .access-btn {
-            background-color: #00ff33;
-            color: #050505;
-            font-family: 'Fira Code', monospace;
-            font-size: 1.2rem;
+        .category-card {
+            background: rgba(5, 5, 5, 0.8);
+            border: 1px solid #00ff33;
+            border-radius: 4px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.1);
+        }
+
+        .category-card h3 {
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            font-size: 0.8rem;
             font-weight: bold;
-            padding: 12px 30px;
-            border: none;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .badge.basic {
+            color: #ffffff;
+        }
+
+        .badge.premium {
+            color: #ffff00;
+            text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+        }
+
+        .category-card p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .mirror-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mirror-btn {
+            background: rgba(0, 255, 51, 0.1);
+            color: #00ff33;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border: 1px solid #00ff33;
             border-radius: 4px;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 255, 51, 0.6);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
         }
 
-        .access-btn:hover {
-            background-color: #ffffff;
-            box-shadow: 0 0 25px #ffffff;
-            transform: scale(1.05);
+        .mirror-btn:hover {
+            background-color: #00ff33;
+            color: #050505;
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.4);
+        }
+
+        .mirror-btn.locked {
+            border-color: #555555;
+            color: #555555;
+            background: rgba(30, 30, 30, 0.5);
+            cursor: not-allowed;
+        }
+
+        .mirror-btn.locked:hover {
+            background: rgba(30, 30, 30, 0.5);
+            color: #555555;
+            box-shadow: none;
         }
 
         .description-bottom {
@@ -104,6 +168,7 @@
             line-height: 1.8;
             border-top: 1px dashed #00ff33;
             padding-top: 25px;
+            width: 100%;
         }
 
         .contact-group {
@@ -153,10 +218,10 @@
 </head>
 <body>
 
-    <div class="login-container">
+    <div class="login-container" id="main-panel">
         <h1>IES AH Unblocked Games</h1>
         
-        <p class="description-top">> Inicia sesión con google para acceder</p>
+        <p class="description-top" id="info-text">> Inicia sesión con google para acceder</p>
 
         <div class="google-btn-wrapper" id="google-login-section">
             <div id="g_id_onload"
@@ -176,8 +241,43 @@
             </div>
         </div>
 
-        <div class="access-btn-wrapper" id="access-section">
-            <button class="access-btn" onclick="inicializarAcceso()">[ Entrar ]</button>
+        <div class="categories-grid" id="categories-section">
+            <div class="category-card">
+                <div>
+                    <h3>Juegos</h3>
+                    <div class="badge basic">BASIC</div>
+                    <p>La experiencia básica: la más barata, solo incluye juegos (algunos no funcionan)</p>
+                </div>
+                <div class="mirror-list">
+                    <button class="mirror-btn" onclick="inicializarAcceso('aHR0cHM6Ly9nbi1tYXRoLmRldi8=')">Mirror 1</button>
+                    <button class="mirror-btn" onclick="inicializarAcceso('aHR0cHM6Ly9nbi1tYXRoLmNjLw==')">Mirror 2</button>
+                    <button class="mirror-btn" onclick="inicializarAcceso('aHR0cHM6Ly9zdG9ja2FibGUtZWRlay5zdGF0aWMuaGYuc3BhY2UvaW5kZXguaHRtbA==')">Mirror 3</button>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div>
+                    <h3>Juegos y más</h3>
+                    <div class="badge premium">PREMIUM</div>
+                    <p>La experiencia premium: una mayor variedad de juegos, una IA, salas de chat privados, peliculas y series.</p>
+                </div>
+                <div class="mirror-list" id="premium-games-mirrors">
+                    <button class="mirror-btn" id="p-game-1" onclick="inicializarAcceso('aHR0cHM6Ly93d3cuZWR1cm9ja3Mub3JnLw==')">Mirror 1</button>
+                    <button class="mirror-btn" id="p-game-2" onclick="inicializarAcceso('aHR0cHM6Ly9qb2luLm5hdGlvbmFsaXQucnUv')">Mirror 2</button>
+                    <button class="mirror-btn" id="p-game-3" onclick="inicializarAcceso('aHR0cHM6Ly9lZHVzYWh1ci5jaW5vc2FyZ29lZGljaW9uZXMuY29tLw==')">Mirror 3</button>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div>
+                    <h3>Proxy</h3>
+                    <div class="badge premium">PREMIUM</div>
+                    <p>Un navegador especial que te permite acceder a cualquier página (incluso las bloqueadas por tu centro!)</p>
+                </div>
+                <div class="mirror-list" id="premium-proxy-mirrors">
+                    <button class="mirror-btn locked" id="p-proxy-1">Coming Soon</button>
+                </div>
+            </div>
         </div>
 
         <div id="status-msg"></div>
@@ -198,17 +298,18 @@
     </div>
 
     <script>
-        const STRICT_WHITELIST_MODE = true; 
-        
         const whitelist = [
+            "jmgarciam11@iesarroyoharnina.es"
+        ];
+
+        const premiumlist = [
             "jmpardusjr@gmail.com",
             "jmpardot04@iesarroyoharnina.es",
             "bassouli01@iesarroyoharnina.es",
             "cguerreroa02@iesarroyoharnina.es",
             "fmunnozs03@iesarroyoharnina.es",
             "noudao02@santiagoapostol.net",
-            "guillenmachiocesar@gmail.com",
-            "jmgarciam11@iesarroyoharnina.es"
+            "guillenmachiocesar@gmail.com"
         ];
 
         const blacklist = [
@@ -231,56 +332,74 @@
             
             const statusBox = document.getElementById("status-msg");
             const googleSection = document.getElementById("google-login-section");
-            const accessSection = document.getElementById("access-section");
+            const categoriesSection = document.getElementById("categories-section");
+            const infoText = document.getElementById("info-text");
             
             statusBox.style.display = "block";
 
             if (blacklist.includes(userEmail)) {
                 statusBox.className = "error";
-                statusBox.innerText = `ACCESO DENEGADO: Tu correo (${userEmail}) está baneado.`;
+                statusBox.innerText = `ACCESO DENEGADO: Tu correo está baneado.`;
                 return;
             }
 
-            if (STRICT_WHITELIST_MODE) {
-                if (whitelist.includes(userEmail)) {
-                    statusBox.className = "success";
-                    statusBox.innerText = `¡Sesión autorizada! Pulsa el botón para continuar.`;
-                    
-                    googleSection.style.display = "none";
-                    accessSection.style.display = "flex";
-                } else {
-                    statusBox.className = "error";
-                    statusBox.innerText = `ACCESO DENEGADO: El correo ${userEmail} no está en la lista blanca.`;
+            let tieneAcceso = false;
+            let esPremium = false;
+
+            if (premiumlist.includes(userEmail)) {
+                tieneAcceso = true;
+                esPremium = true;
+            } else if (whitelist.includes(userEmail)) {
+                tieneAcceso = true;
+                esPremium = false;
+            }
+
+            if (tieneAcceso) {
+                statusBox.className = "success";
+                statusBox.innerText = esPremium ? `Sesión Premium activa: Acceso total concedido.` : `Sesión Básica activa: Acceso concedido.`;
+                
+                infoText.innerText = `> Selecciona un servidor para continuar`;
+                googleSection.style.display = "none";
+                categoriesSection.style.display = "grid";
+
+                if (!esPremium) {
+                    bloquearPremium();
                 }
             } else {
-                statusBox.className = "success";
-                statusBox.innerText = `Acceso Concedido.`;
-                googleSection.style.display = "none";
-                accessSection.style.display = "flex";
+                statusBox.className = "error";
+                statusBox.innerText = `ACCESO DENEGADO: El correo ${userEmail} no está registrado.`;
             }
         }
 
-        function inicializarAcceso() {
-            const newWindow = window.open('about:blank', '_blank');
-    
-            if (newWindow) {
-                const doc = newWindow.document;
-                
-                doc.body.style.margin = '0';
-                doc.body.style.padding = '0';
-                doc.body.style.height = '100vh';
-                doc.body.style.overflow = 'hidden';
-                
-                const iframe = doc.createElement('iframe');
-                
-                const secreto = "aHR0cHM6Ly9lZHVyb2Nrcy5vcmcvZ3htZXMuaHRtbA==";
-                iframe.src = window.atob(secreto);
-                
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
-                
-                doc.body.appendChild(iframe);
+        function bloquearPremium() {
+            const botonesPremium = document.querySelectorAll("#premium-games-mirrors .mirror-btn");
+            botonesPremium.forEach(btn => {
+                btn.className = "mirror-btn locked";
+                btn.innerText = "Bloqueado";
+                btn.removeAttribute("onclick");
+            });
+            
+            const proxyBtn = document.getElementById("p-proxy-1");
+            if (proxyBtn) {
+                proxyBtn.innerText = "Bloqueado";
+            }
+        }
+
+        function inicializarAcceso(hashSecreto) {
+            const urlReal = window.atob(hashSecreto);
+            const p = window.open('about:blank', '_blank');
+            
+            if (p) {
+                p.document.write(
+                    '<!DOCTYPE html><html><head>' +
+                    '<meta charset="utf-8">' +
+                    '<title>IES AH Unblocked Games</title>' +
+                    '<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style>' +
+                    '</head><body>' +
+                    '<iframe src="' + urlReal + '"></iframe>' +
+                    '</body></html>'
+                );
+                p.document.close();
             } else {
                 alert('Por favor, permite las ventanas emergentes (pop-ups) en tu navegador.');
             }
