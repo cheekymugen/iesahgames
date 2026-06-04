@@ -50,11 +50,11 @@
             pointer-events: none;
         }
 
-        /* MODIFICADO: Panel con fondo translúcido y desenfoque (Efecto cristal) */
+        /* ACTUALIZADO: Panel ultra transparente y con un blur mínimo para máxima visibilidad */
         .login-container {
-            background-color: rgba(10, 10, 10, 0.65); /* Más transparente */
-            backdrop-filter: blur(5px); /* Hace que las partículas pasen borrosas por detrás */
-            -webkit-backdrop-filter: blur(5px);
+            background-color: rgba(10, 10, 10, 0.20); /* Súper transparente */
+            backdrop-filter: blur(1px); /* Desenfoque casi inexistente para que no tape los puntos */
+            -webkit-backdrop-filter: blur(1px);
             border: 2px solid #00ff33;
             box-shadow: 0 0 25px rgba(0, 255, 51, 0.15);
             padding: 40px;
@@ -94,11 +94,11 @@
             text-align: left;
         }
 
-        /* MODIFICADO: Tarjetas con transparencia y desenfoque */
+        /* ACTUALIZADO: Tarjetas internas también casi invisibles para resaltar el fondo */
         .category-card {
-            background: rgba(5, 5, 5, 0.5); /* Translúcido para ver el fondo */
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            background: rgba(5, 5, 5, 0.15); 
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
             border: 1px solid #00ff33;
             border-radius: 4px;
             padding: 20px;
@@ -132,7 +132,7 @@
         }
 
         .category-card p {
-            color: #d0d0d0; /* Un poco más claro para mejor lectura sobre el blur */
+            color: #e0e0e0; /* Color claro para que se lea perfectamente sin importar el fondo */
             font-size: 0.9rem;
             line-height: 1.4;
             margin-bottom: 20px;
@@ -426,7 +426,7 @@
             }
         }
 
-        /* --- MOTOR DE PARTÍCULAS INTERACTIVAS (AJUSTE DE RED Y OPACIDAD) --- */
+        /* --- MOTOR DE PARTÍCULAS INTERACTIVAS --- */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -484,12 +484,12 @@
             if(numberOfParticles > 85) numberOfParticles = 85;
 
             for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 3) + 1.5; // Puntos grandes estables
+                let size = (Math.random() * 3) + 1.5; 
                 let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
                 let directionX = (Math.random() * 0.4) - 0.2;
                 let directionY = (Math.random() * 0.4) - 0.2;
-                let color = 'rgba(0, 255, 51, 0.65)'; // Color vivo y nítido
+                let color = 'rgba(0, 255, 51, 0.65)'; 
 
                 particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
             }
@@ -498,7 +498,7 @@
         function connectParticles() {
             let opacityValue = 1;
             
-            // 1. MODIFICADO: Conexiones entre partículas menos notables (finas y suaves)
+            // 1. Enlaces finos entre partículas
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
@@ -506,8 +506,8 @@
                     
                     if (distance < (canvas.width/9.5) * (canvas.height/9.5)) {
                         opacityValue = 1 - (distance / 11000);
-                        ctx.strokeStyle = 'rgba(0, 255, 51,' + opacityValue * 0.08 + ')'; /* Menos visible */
-                        ctx.lineWidth = 0.8; /* Más fina */
+                        ctx.strokeStyle = 'rgba(0, 255, 51,' + opacityValue * 0.08 + ')'; 
+                        ctx.lineWidth = 0.8; 
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
@@ -515,7 +515,7 @@
                     }
                 }
 
-                // 2. Conexiones potentes directamente al pasar el ratón
+                // 2. Enlaces potentes al pasar el ratón (Súper marcados)
                 if (mouse.x !== null && mouse.y !== null) {
                     let dx = particlesArray[a].x - mouse.x;
                     let dy = particlesArray[a].y - mouse.y;
@@ -524,7 +524,7 @@
                     if (mouseDistance < mouse.radius) {
                         let mouseOpacity = 1 - (mouseDistance / mouse.radius);
                         ctx.strokeStyle = 'rgba(0, 255, 51,' + mouseOpacity * 0.55 + ')';
-                        ctx.lineWidth = 2.0; /* Gruesa y llamativa */
+                        ctx.lineWidth = 2.0; 
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(mouse.x, mouse.y);
