@@ -50,10 +50,13 @@
             pointer-events: none;
         }
 
+        /* MODIFICADO: Panel con fondo translúcido y desenfoque (Efecto cristal) */
         .login-container {
-            background-color: rgba(10, 10, 10, 0.93);
+            background-color: rgba(10, 10, 10, 0.65); /* Más transparente */
+            backdrop-filter: blur(5px); /* Hace que las partículas pasen borrosas por detrás */
+            -webkit-backdrop-filter: blur(5px);
             border: 2px solid #00ff33;
-            box-shadow: 0 0 20px rgba(0, 255, 51, 0.2);
+            box-shadow: 0 0 25px rgba(0, 255, 51, 0.15);
             padding: 40px;
             border-radius: 5px;
             text-align: center;
@@ -91,8 +94,11 @@
             text-align: left;
         }
 
+        /* MODIFICADO: Tarjetas con transparencia y desenfoque */
         .category-card {
-            background: rgba(5, 5, 5, 0.85);
+            background: rgba(5, 5, 5, 0.5); /* Translúcido para ver el fondo */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid #00ff33;
             border-radius: 4px;
             padding: 20px;
@@ -126,7 +132,7 @@
         }
 
         .category-card p {
-            color: #a0a0a0;
+            color: #d0d0d0; /* Un poco más claro para mejor lectura sobre el blur */
             font-size: 0.9rem;
             line-height: 1.4;
             margin-bottom: 20px;
@@ -420,12 +426,11 @@
             }
         }
 
-        /* --- MOTOR DE PARTÍCULAS INTERACTIVAS (ACTUALIZADO: MÁS VISUAL) --- */
+        /* --- MOTOR DE PARTÍCULAS INTERACTIVAS (AJUSTE DE RED Y OPACIDAD) --- */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
 
         let particlesArray;
-        // Aumentado un pelín el radio para que detecte el ratón desde más lejos
         let mouse = { x: null, y: null, radius: 160 };
 
         window.addEventListener('mousemove', function(event) {
@@ -479,14 +484,12 @@
             if(numberOfParticles > 85) numberOfParticles = 85;
 
             for (let i = 0; i < numberOfParticles; i++) {
-                // MODIFICADO: Puntos más grandes (de 1.5px a 4.5px de radio)
-                let size = (Math.random() * 3) + 1.5;
+                let size = (Math.random() * 3) + 1.5; // Puntos grandes estables
                 let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
                 let directionX = (Math.random() * 0.4) - 0.2;
                 let directionY = (Math.random() * 0.4) - 0.2;
-                // Partículas un poco más sólidas e iluminadas
-                let color = 'rgba(0, 255, 51, 0.6)';
+                let color = 'rgba(0, 255, 51, 0.65)'; // Color vivo y nítido
 
                 particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
             }
@@ -495,16 +498,16 @@
         function connectParticles() {
             let opacityValue = 1;
             
-            // 1. Conexiones entre partículas
+            // 1. MODIFICADO: Conexiones entre partículas menos notables (finas y suaves)
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
                                  + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
                     
-                    if (distance < (canvas.width/9) * (canvas.height/9)) {
-                        opacityValue = 1 - (distance / 12000);
-                        ctx.strokeStyle = 'rgba(0, 255, 51,' + opacityValue * 0.15 + ')';
-                        ctx.lineWidth = 1;
+                    if (distance < (canvas.width/9.5) * (canvas.height/9.5)) {
+                        opacityValue = 1 - (distance / 11000);
+                        ctx.strokeStyle = 'rgba(0, 255, 51,' + opacityValue * 0.08 + ')'; /* Menos visible */
+                        ctx.lineWidth = 0.8; /* Más fina */
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
@@ -512,7 +515,7 @@
                     }
                 }
 
-                // 2. MODIFICADO: Conexiones con el ratón mucho más notables
+                // 2. Conexiones potentes directamente al pasar el ratón
                 if (mouse.x !== null && mouse.y !== null) {
                     let dx = particlesArray[a].x - mouse.x;
                     let dy = particlesArray[a].y - mouse.y;
@@ -520,10 +523,8 @@
 
                     if (mouseDistance < mouse.radius) {
                         let mouseOpacity = 1 - (mouseDistance / mouse.radius);
-                        // MODIFICADO: Más opacidad (hasta 0.55) para que brillen más
                         ctx.strokeStyle = 'rgba(0, 255, 51,' + mouseOpacity * 0.55 + ')';
-                        // MODIFICADO: Líneas notablemente más gruesas (2px) enfocadas en el ratón
-                        ctx.lineWidth = 2.0; 
+                        ctx.lineWidth = 2.0; /* Gruesa y llamativa */
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(mouse.x, mouse.y);
