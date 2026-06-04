@@ -29,7 +29,6 @@
             padding: 20px 0;
         }
         
-        /* Lienzo interactivo para las partículas de fondo */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -37,7 +36,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            pointer-events: none; /* Permite clickar a través de él sin problemas */
+            pointer-events: none;
         }
 
         body::before {
@@ -421,14 +420,14 @@
             }
         }
 
-        /* --- MOTOR DE PARTÍCULAS INTERACTIVAS (CANVAS) --- */
+        /* --- MOTOR DE PARTÍCULAS INTERACTIVAS CON RATÓN CONECTADO --- */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
 
         let particlesArray;
-        let mouse = { x: null, y: null, radius: 100 };
+        // El radio controla a qué distancia máxima se conectará el ratón con las partículas
+        let mouse = { x: null, y: null, radius: 140 };
 
-        // Escuchar el movimiento del ratón por la ventana
         window.addEventListener('mousemove', function(event) {
             mouse.x = event.clientX;
             mouse.y = event.clientY;
@@ -439,7 +438,6 @@
             mouse.y = null;
         });
 
-        // Redimensionar el lienzo si cambia la pantalla
         window.addEventListener('resize', function() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -462,7 +460,7 @@
                 ctx.fill();
             }
             update() {
-                // Comprobar colisión con los bordes de la pantalla
+                // Rebotar en los extremos de la pantalla de forma limpia
                 if (this.x > canvas.width || this.x < 0) {
                     this.directionX = -this.directionX;
                 }
@@ -470,18 +468,7 @@
                     this.directionY = -this.directionY;
                 }
 
-                // Interacción con el ratón (efecto repulsión suave)
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx*dx + dy*dy);
-                if (distance < mouse.radius) {
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 2;
-                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 2;
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 2;
-                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 2;
-                }
-
-                // Mover partícula
+                // Sin repulsión: se mueven libremente por su inercia
                 this.x += this.directionX;
                 this.y += this.directionY;
                 this.draw();
@@ -490,15 +477,14 @@
 
         function initParticles() {
             particlesArray = [];
-            // Densidad de partículas ajustada según la pantalla para que sea óptimo y ligero
             let numberOfParticles = (canvas.height * canvas.width) / 14000;
-            if(numberOfParticles > 90) numberOfParticles = 90; // Límite para evitar ralentizaciones
+            if(numberOfParticles > 90) numberOfParticles = 90;
 
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 2) + 0.5;
                 let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 0.4) - 0.2;
+                let directionX = (Math.random() * 0.4) - 0.2; // Velocidad suave
                 let directionY = (Math.random() * 0.4) - 0.2;
                 let color = 'rgba(0, 255, 51, 0.45)';
 
@@ -508,19 +494,38 @@
 
         function connectParticles() {
             let opacityValue = 1;
+            
+            // 1. Conexiones normales de partículas entre sí
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
                                  + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
                     
-                    // Si dos partículas están lo suficientemente cerca, traza una línea entre ellas
                     if (distance < (canvas.width/9) * (canvas.height/9)) {
                         opacityValue = 1 - (distance / 12000);
-                        ctx.strokeStyle = 'rgba(0, 255, 51,' + opacityValue * 0.15 + ')';
+                        ctx.strokeStyle = 'rgba(0, 255, 51,' + opacityValue * 0.12 + ')';
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+
+                // 2. NUEVO: Enlazar el ratón dinámicamente con las partículas más cercanas
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = particlesArray[a].x - mouse.x;
+                    let dy = particlesArray[a].y - mouse.y;
+                    let mouseDistance = Math.sqrt(dx*dx + dy*dy);
+
+                    if (mouseDistance < mouse.radius) {
+                        // Cuanto más cerca del cursor, más brillante es el enlace
+                        let mouseOpacity = 1 - (mouseDistance / mouse.radius);
+                        ctx.strokeStyle = 'rgba(0, 255, 51,' + mouseOpacity * 0.28 + ')';
+                        ctx.lineWidth = 1.2; // Línea un pelín más gruesa para destacar el foco del ratón
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(mouse.x, mouse.y);
                         ctx.stroke();
                     }
                 }
@@ -537,7 +542,6 @@
             connectParticles();
         }
 
-        // Inicialización del motor gráfico al arrancar
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         initParticles();
